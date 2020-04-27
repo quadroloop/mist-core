@@ -1,28 +1,28 @@
 package main
 
 import (
-    "fmt"
-    "io/ioutil"
-		"log"
-		"os"
+	"fmt"
+	"io/ioutil"
+	"log"
+	"os"
 )
 
 func main() {
 	fmt.Println("Running mist...")
-  scanDir()
+	scanDir()
 }
 
 func scanDir() {
 	files, err := ioutil.ReadDir("./")
 	if err != nil {
-			log.Fatal(err)
+		log.Fatal(err)
 	}
 
 	for _, f := range files {
 		file, err := os.Open(f.Name())
 
 		if err != nil {
-			 fmt.Println(err)
+			fmt.Println(err)
 		}
 		defer file.Close()
 
@@ -31,9 +31,9 @@ func scanDir() {
 			fmt.Println(err)
 		}
 		if fi.IsDir() {
-				fmt.Println("DIRECTORY===>",f.Name())
+			fmt.Println("DIRECTORY===>", f.Name())
 		} else {
-			fmt.Println("FILE===>",f.Name())
+			fmt.Println("FILE===>", f.Name())
 		}
 	}
 }
