@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"strings"
 )
 
 const (
@@ -14,6 +15,8 @@ const (
 	ErrorColor   = "\033[1;31m%s\033[0m"
 	DebugColor   = "\033[0;36m%s\033[0m"
 )
+
+var mappedNodes string
 
 func main() {
 	fmt.Printf(InfoColor,"Running mist...")
@@ -28,6 +31,16 @@ func logError(msg string,detail error){
 	fmt.Println("")
 }
 
+func logNode(msg string, node string, color string){
+	fmt.Printf(DebugColor,msg)
+	fmt.Printf(color,"["+node+"]")
+	fmt.Println("")
+}
+
+func stringify(text string) string {
+	return("\""+text+"\"")
+}
+
 
 func scanNodes() {
 	files, err := ioutil.ReadDir("./nodes")
@@ -40,7 +53,7 @@ func scanNodes() {
 		file, err := os.Open(f.Name())
 
 		if err != nil {
-			logError("Read file error",err)
+			logError("Read file error: ",err)
 		}
 
 		defer file.Close()
@@ -53,9 +66,8 @@ func scanNodes() {
 
 
 func mapNode(node string) {
-	fmt.Printf(DebugColor,"Mapping Node... ")
-	fmt.Printf(WarningColor,"["+node+"]")
-	fmt.Println("")
+
+	logNode("Mapping Node... ",node,WarningColor)
 
 	files, err := ioutil.ReadDir("./nodes/"+node+"/public/mist")
 
@@ -78,16 +90,34 @@ func mapNode(node string) {
 		defer file.Close()
 
 		if fi, err := file.Stat(); err != nil || !fi.IsDir() {
-			nodeMap = nodeMap+"{"+"name:"+"'"+f.Name()+"',size: ";
-			nodeMap = fmt.Sprint(nodeMap,f.Size())+",modified:'"
-			nodeMap = fmt.Sprint(nodeMap,f.ModTime()) + "'},"
+			nodeMap = nodeMap+"{"+"\"name\": \""+f.Name()+"\",\"size\":";
+			nodeMap = fmt.Sprint(nodeMap,f.Size())+",\"modified\":\""
+			nodeMap = fmt.Sprint(nodeMap,f.ModTime()) + "\"},"
 		}
 	}
 
-	fmt.Println("["+nodeMap+"]")
 
+		nodeMap = "["+ nodeMap + "]"
+		nodeMap = strings.Replace(nodeMap,"},]","}]",-1)
+		segmentMap := stringify(node) +":" + nodeMap
+		mappedNodes = "{"+segmentMap+",}"
+		mappedNodes =  strings.Replace(mappedNodes,"],}","]}",-1)
+		updateMapFile(node)
 	}
 
+}
 
+func updateMapFile(node_name string) {
+	logNode("Done. ==> ",node_name,WarningColor)
+	logNode("Adding to Map file.. ==> ",node_name,WarningColor)
+
+	file, err := os.Create("./nodes/"+node_name+"/public/mist.map.json")
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		file.WriteString(mappedNodes)
+	  logNode("Update complete. ==> ",node_name,WarningColor)
+	}
+	file.Close()
 
 }
