@@ -120,5 +120,4 @@ func updateMapFile(node_name string) {
 	  logNode("Update complete. ==> ",node_name,SuccessColor)
 	}
 	file.Close()
-
 }
