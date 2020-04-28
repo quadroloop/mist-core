@@ -28,6 +28,7 @@ func logError(msg string,detail error){
 	fmt.Println("")
 }
 
+
 func scanNodes() {
 	files, err := ioutil.ReadDir("./nodes")
 
@@ -77,7 +78,9 @@ func mapNode(node string) {
 		defer file.Close()
 
 		if fi, err := file.Stat(); err != nil || !fi.IsDir() {
-		  nodeMap = nodeMap+"{"+"name:"+"'"+f.Name()+"'"+"},"
+			nodeMap = nodeMap+"{"+"name:"+"'"+f.Name()+"',size: ";
+			nodeMap = fmt.Sprint(nodeMap,f.Size())+",modified:'"
+			nodeMap = fmt.Sprint(nodeMap,f.ModTime()) + "'},"
 		}
 	}
 
