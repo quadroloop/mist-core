@@ -14,6 +14,7 @@ const (
 	WarningColor = "\033[1;33m%s\033[0m"
 	ErrorColor   = "\033[1;31m%s\033[0m"
 	DebugColor   = "\033[0;36m%s\033[0m"
+	SuccessColor = "\033[1;32m%s\033[0m"
 )
 
 var mappedNodes string
@@ -108,7 +109,7 @@ func mapNode(node string) {
 }
 
 func updateMapFile(node_name string) {
-	logNode("Done. ==> ",node_name,WarningColor)
+	logNode("Done. ==> ",node_name,SuccessColor)
 	logNode("Adding to Map file.. ==> ",node_name,WarningColor)
 
 	file, err := os.Create("./nodes/"+node_name+"/public/mist.map.json")
@@ -116,7 +117,7 @@ func updateMapFile(node_name string) {
 		fmt.Println(err)
 	} else {
 		file.WriteString(mappedNodes)
-	  logNode("Update complete. ==> ",node_name,WarningColor)
+	  logNode("Update complete. ==> ",node_name,SuccessColor)
 	}
 	file.Close()
 
