@@ -60,7 +60,9 @@ func mapNode(node string) {
 
 	if err != nil {
 		logError("Node Map Error:",err)
-	}
+	}else{
+
+	var nodeMap string
 
 	for _, f := range files {
 		file, err := os.Open(f.Name())
@@ -75,9 +77,14 @@ func mapNode(node string) {
 		defer file.Close()
 
 		if fi, err := file.Stat(); err != nil || !fi.IsDir() {
-			fmt.Println("found file====>",f.Name(),f.Size())
+		  nodeMap = nodeMap+"{"+"name:"+"'"+f.Name()+"'"+"},"
 		}
 	}
+
+	fmt.Println("["+nodeMap+"]")
+
+	}
+
 
 
 }
