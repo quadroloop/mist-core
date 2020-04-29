@@ -6,6 +6,9 @@ import (
 	"log"
 	"os"
 	"strings"
+
+	"github.com/fsnotify/fsnotify"
+
 )
 
 const (
@@ -120,4 +123,42 @@ func updateMapFile(node_name string) {
 	  logNode("Update complete. ==> ",node_name,SuccessColor)
 	}
 	file.Close()
+
+
+	// watch for changes on node
+
+	watcher, err := fsnotify.NewWatcher()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer watcher.Close()
+
+	done := make(chan bool)
+	go func() {
+		for {
+			select {
+			case event, ok := <-watcher.Events:
+				if !ok {
+					return
+				}
+				log.Println("event:", event)
+				if event.Op&fsnotify.Write == fsnotify.Write {
+					log.Println("modified file:", event.Name)
+				}
+			case err, ok := <-watcher.Errors:
+				if !ok {
+					return
+				}
+				log.Println("error:", err)
+			}
+		}
+	}()
+
+	err = watcher.Add("./nodes/"+node_name+"/public/mist")
+	if err != nil {
+		log.Fatal(err)
+	}
+	<-done
+
+
 }
