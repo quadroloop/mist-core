@@ -172,19 +172,18 @@ func updateNode(node string) {
 		mappedNodes = "{" + segmentMap + ",}"
 		mappedNodes = strings.Replace(mappedNodes, "],}", "]}", -1)
 
-
 		// watch file change update node map file on change
-	logNode("Done. ==> ", node, SuccessColor)
-	logNode("Adding to Map file.. ==> ", node, WarningColor)
+		logNode("Done. ==> ", node, SuccessColor)
+		logNode("Adding to Map file.. ==> ", node, WarningColor)
 
-	file, err := os.Create("./nodes/" + node + "/public/mist.map.json")
-	if err != nil {
-		fmt.Println(err)
-	} else {
-		file.WriteString(mappedNodes)
-		logNode("Update complete. ==> ", node, SuccessColor)
-	}
-	file.Close()
+		file, err := os.Create("./nodes/" + node + "/public/mist.map.json")
+		if err != nil {
+			fmt.Println(err)
+		} else {
+			file.WriteString(mappedNodes)
+			logNode("Update complete. ==> ", node, SuccessColor)
+		}
+		file.Close()
 	}
 }
 
