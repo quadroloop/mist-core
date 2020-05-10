@@ -203,7 +203,6 @@ func updateMapFile(node_name string) {
 		file.WriteString(mappedNodes)
 		logNode("Update complete. ==> ", node_name, SuccessColor)
 		updateNode(node_name)
-		updateNodeRepo(node_name)
 	}
 	file.Close()
 
@@ -230,6 +229,8 @@ func updateMapFile(node_name string) {
 
 				if strings.Contains(changeType,"CREATE") || strings.Contains(changeType,"RENAME") {
 					logNode("[CHANGE EVENT] ==> ", node_name, SuccessColor)
+					updateNode(node_name)
+					updateNodeRepo(node_name)
 				}
 
 				if event.Op&fsnotify.Write == fsnotify.Write {
