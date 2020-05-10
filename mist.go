@@ -107,6 +107,56 @@ func mapNode(node string) {
 
 }
 
+
+func updateNode(node string) {
+
+	logNode("Mapping Node... ", node, WarningColor)
+
+	files, err := ioutil.ReadDir("./nodes/" + node + "/public/mist")
+
+	if err != nil {
+		logError("Node Map Error:", err)
+	} else {
+
+		var nodeMap string
+
+		for _, f := range files {
+			file, err := os.Open(f.Name())
+
+			if err != nil {
+				// fmt.Printf(WarningColor,"[Error]: ")
+				// fmt.Printf(ErrorColor,"Read file error: ")
+				// fmt.Printf(ErrorColor,err)
+				// fmt.Println("")
+			}
+
+			defer file.Close()
+
+			if fi, err := file.Stat(); err != nil || !fi.IsDir() {
+				nodeMap = nodeMap + "{" + "\"name\": \"" + f.Name() + "\",\"size\":"
+				nodeMap = fmt.Sprint(nodeMap, f.Size()) + ",\"modified\":\""
+				nodeMap = fmt.Sprint(nodeMap, f.ModTime()) + "\"},"
+			}
+		}
+
+		nodeMap = "[" + nodeMap + "]"
+		nodeMap = strings.Replace(nodeMap, "},]", "}]", -1)
+		segmentMap := stringify(node) + ":" + nodeMap
+		mappedNodes = "{" + segmentMap + ",}"
+		mappedNodes = strings.Replace(mappedNodes, "],}", "]}", -1)
+	}
+
+}
+
+
+func updateNodeRepo(node_name string){
+	logNode("Updadting node repository. ==> ", node_name, SuccessColor)
+	logNode("running git commands... ==> ", node_name, WarningColor)
+}
+
+
+
+
 func updateMapFile(node_name string) {
 	logNode("Done. ==> ", node_name, SuccessColor)
 	logNode("Adding to Map file.. ==> ", node_name, WarningColor)
@@ -117,6 +167,8 @@ func updateMapFile(node_name string) {
 	} else {
 		file.WriteString(mappedNodes)
 		logNode("Update complete. ==> ", node_name, SuccessColor)
+		updateNode(node_name)
+		updateNodeRepo(node_name)
 	}
 	file.Close()
 
