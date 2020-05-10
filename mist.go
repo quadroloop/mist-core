@@ -41,9 +41,9 @@ func logNode(msg string, node string, color string) {
 	fmt.Println("")
 }
 
-func cmd(command string) {
+func cmd(command string, arg1 string, arg2 string) {
 
-	cmd := exec.Command(command)
+	cmd := exec.Command(command,arg1,arg2)
 	stdout, err := cmd.Output()
 
 	if err != nil {
@@ -57,6 +57,21 @@ func cmd(command string) {
 func stringify(text string) string {
 	return ("\"" + text + "\"")
 }
+
+
+func scmd(command string, arg1 string) {
+
+	cmd := exec.Command(command,arg1)
+	stdout, err := cmd.Output()
+
+	if err != nil {
+			fmt.Println(err.Error())
+			return
+	}
+
+	fmt.Print(string(stdout))
+}
+
 
 func scanNodes() {
 	files, err := ioutil.ReadDir("./nodes")
@@ -85,6 +100,9 @@ func mapNode(node string) {
 	logNode("Mapping Node... ", node, WarningColor)
 
 	files, err := ioutil.ReadDir("./nodes/" + node + "/public/mist")
+
+	cmd("open","./nodes/" + node + "/public/mist","")
+
 
 	if err != nil {
 		logError("Node Map Error:", err)
@@ -167,6 +185,8 @@ func updateNodeRepo(node_name string){
 	logNode("Updadting node repository. ==> ", node_name, SuccessColor)
 	logNode("running git commands... ==> ", node_name, WarningColor)
 
+	cmd("cd","./nodes/" + node_name + "/public/mist","")
+	scmd("git","status")
 
 }
 
