@@ -43,37 +43,32 @@ func logNode(msg string, node string, color string) {
 
 func cmd(command string, arg1 string, arg2 string) {
 
-	cmd := exec.Command(command,arg1,arg2)
+	cmd := exec.Command(command, arg1, arg2)
 	stdout, err := cmd.Output()
 
 	if err != nil {
-			fmt.Println(err.Error())
-			return
+		fmt.Println(err.Error())
+		return
 	}
 
 	fmt.Print(string(stdout))
 }
 
-
-
 func stringify(text string) string {
 	return ("\"" + text + "\"")
 }
 
-
 func scmd(path string) {
 
-
-cmd := &exec.Cmd {
-	Path: "./git-script.sh",
-	Args: []string{ "./git-script.sh", path },
-	Stdout: os.Stdout,
-	Stderr: os.Stdout,
+	cmd := &exec.Cmd{
+		Path:   "./git-script.sh",
+		Args:   []string{"./git-script.sh", path},
+		Stdout: os.Stdout,
+		Stderr: os.Stdout,
+	}
+	cmd.Start()
+	cmd.Wait()
 }
-cmd.Start();
-cmd.Wait()
-}
-
 
 func scanNodes() {
 	files, err := ioutil.ReadDir("./nodes")
@@ -103,8 +98,7 @@ func mapNode(node string) {
 
 	files, err := ioutil.ReadDir("./nodes/" + node + "/public/mist")
 
-	cmd("open","./nodes/" + node + "/public/mist","")
-
+	cmd("open", "./nodes/"+node+"/public/mist", "")
 
 	if err != nil {
 		logError("Node Map Error:", err)
@@ -140,7 +134,6 @@ func mapNode(node string) {
 	}
 
 }
-
 
 func updateNode(node string) {
 
@@ -182,15 +175,12 @@ func updateNode(node string) {
 
 }
 
-
-func updateNodeRepo(node_name string){
+func updateNodeRepo(node_name string) {
 	logNode("Updadting node repository. ==> ", node_name, SuccessColor)
 	logNode("running git commands... ==> ", node_name, WarningColor)
 
-  scmd("./nodes/" + node_name)
+	scmd("./nodes/" + node_name)
 }
-
-
 
 func updateMapFile(node_name string) {
 	logNode("Done. ==> ", node_name, SuccessColor)
@@ -225,9 +215,9 @@ func updateMapFile(node_name string) {
 					return
 				}
 
-				changeType := fmt.Sprint(event,"");
+				changeType := fmt.Sprint(event, "")
 
-				if strings.Contains(changeType,"CREATE") || strings.Contains(changeType,"RENAME") {
+				if strings.Contains(changeType, "CREATE") || strings.Contains(changeType, "RENAME") {
 					logNode("[CHANGE EVENT] ==> ", node_name, SuccessColor)
 					updateNode(node_name)
 					updateNodeRepo(node_name)
