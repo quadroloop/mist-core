@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"os/exec"
 	"strings"
 
 	"github.com/fsnotify/fsnotify"
@@ -38,6 +39,19 @@ func logNode(msg string, node string, color string) {
 	fmt.Printf(DebugColor, msg)
 	fmt.Printf(color, "["+node+"]")
 	fmt.Println("")
+}
+
+func cmd(command string) {
+
+	cmd := exec.Command(command)
+	stdout, err := cmd.Output()
+
+	if err != nil {
+			fmt.Println(err.Error())
+			return
+	}
+
+	fmt.Print(string(stdout))
 }
 
 func stringify(text string) string {
@@ -152,6 +166,8 @@ func updateNode(node string) {
 func updateNodeRepo(node_name string){
 	logNode("Updadting node repository. ==> ", node_name, SuccessColor)
 	logNode("running git commands... ==> ", node_name, WarningColor)
+
+
 }
 
 
