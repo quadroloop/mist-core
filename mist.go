@@ -54,22 +54,24 @@ func cmd(command string, arg1 string, arg2 string) {
 	fmt.Print(string(stdout))
 }
 
+
+
 func stringify(text string) string {
 	return ("\"" + text + "\"")
 }
 
 
-func scmd(command string, arg1 string) {
+func scmd(path string) {
 
-	cmd := exec.Command(command,arg1)
-	stdout, err := cmd.Output()
 
-	if err != nil {
-			fmt.Println(err.Error())
-			return
-	}
-
-	fmt.Print(string(stdout))
+cmd := &exec.Cmd {
+	Path: "./git-script.sh",
+	Args: []string{ "./git-script.sh", path },
+	Stdout: os.Stdout,
+	Stderr: os.Stdout,
+}
+cmd.Start();
+cmd.Wait()
 }
 
 
@@ -185,11 +187,8 @@ func updateNodeRepo(node_name string){
 	logNode("Updadting node repository. ==> ", node_name, SuccessColor)
 	logNode("running git commands... ==> ", node_name, WarningColor)
 
-	cmd("cd","./nodes/" + node_name + "/public/mist","")
-	scmd("git","status")
-
+  scmd("./nodes/" + node_name)
 }
-
 
 
 
